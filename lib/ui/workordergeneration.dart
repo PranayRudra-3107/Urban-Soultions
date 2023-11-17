@@ -1,12 +1,11 @@
-import 'package:Urban_Solutions/ui/workordergeneration.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'cards.dart';
 import 'home.dart';
 import 'login.dart';
 
-class Model extends StatelessWidget {
-  Model({super.key});
+class Workordergeneration extends StatelessWidget {
+  Workordergeneration({super.key});
 
   final Box _boxLogin = Hive.box("login");
 
@@ -76,22 +75,22 @@ class Model extends StatelessWidget {
                 TabBar(
                   isScrollable: true,
                   tabs: [
-                    Tab(text: 'All'),
-                    Tab(text: 'On Going'),
-                    Tab(text: 'Not Started'),
-                    Tab(text: 'Completed'),
+                    Flexible(child: Tab(text: 'All')),
+                    Flexible(child: Tab(text: 'On Going')),
+                    Flexible(child: Tab(text: 'Not Started')),
+                    Flexible(child: Tab(text: 'Completed')),
                   ],
                 ),
-                 Expanded(
-                   child: TabBarView(
+                Expanded(
+                  child: TabBarView(
                     children: [
                       Center(child: All()),
-                      Center(child: Workordergeneration()),
+                      Center(child: All()),
                       Center(child: All()),
                       Center(child: All()),
                     ],
+                  ),
                 ),
-                 ),
               ],
             ),
           ),

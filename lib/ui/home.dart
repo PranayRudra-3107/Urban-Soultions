@@ -1,3 +1,4 @@
+import 'package:Urban_Solutions/ui/Process%20Operator/operator_card.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -249,7 +250,7 @@ class Home extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Model()),
+                            MaterialPageRoute(builder: (context) => Operator_card()),
                           );
                         },
                         child: Card(

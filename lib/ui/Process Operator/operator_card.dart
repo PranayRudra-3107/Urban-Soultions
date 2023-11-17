@@ -1,18 +1,49 @@
+import 'package:Urban_Solutions/ui/Process%20Operator/operator_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'workordergeneration.dart';
-import 'model.dart';
 import 'dart:developer';
 
 
-class All extends StatelessWidget {
-  All({super.key});
+class Operator_card extends StatelessWidget {
+  Operator_card({super.key});
 
   final Box _boxLogin = Hive.box("login");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Model:S -10"),
+        elevation: 0,
+        backgroundColor: Colors.green,
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  _boxLogin.clear();
+                  _boxLogin.put("loginStatus", false);
+                  // Navigator.pushReplacement(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) {
+                  //       return const Login();
+                  //     },
+                  //   ),
+                  // );
+                },
+                icon: const Icon(Icons.notifications),
+              ),
+            ),
+          )
+        ],
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -21,70 +52,60 @@ class All extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    log('Button is clicked', name: 'ElevatedButton');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Workordergeneration()),
-                    );
-                  },
-                  child: Text('Go to Workordergeneration'),
-                ),
                 const SizedBox(height: 10),
 
                 const SizedBox(height: 10),
 
                 Container(
                   height: 165,
-                    child: Card(
-                      elevation: 9,
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 25.0, left: 20.0, right: 20.0, bottom: 20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Icon(Icons.check, color: Colors.green),
-                                          Text('Completed'),
-                                        ],
-                                      ),
-                                      Icon(Icons.chevron_right),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    'BOM Generation',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                  child: Card(
+                    elevation: 9,
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 25.0, left: 20.0, right: 20.0, bottom: 20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        Icon(Icons.check, color: Colors.green),
+                                        Text('Completed'),
+                                      ],
                                     ),
+                                    Icon(Icons.chevron_right),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'BOM Generation',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text("Start Date : 21/02/2023"),
-                                      Text("Time: 1hr 24min")
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text("Complete Date: 24/03/2023"),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text("Start Date : 21/02/2023"),
+                                    Text("Time: 1hr 24min")
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Text("Complete Date: 24/03/2023"),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
+                ),
 
 
                 Container(
@@ -140,7 +161,7 @@ class All extends StatelessWidget {
                       log ('Container is clicked', name: 'GestureDetector');
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Workordergeneration()),
+                        MaterialPageRoute(builder: (context) => Operator_timer()),
                       );
                     },
                   ),
