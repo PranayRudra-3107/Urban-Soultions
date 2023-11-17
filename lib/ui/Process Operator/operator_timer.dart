@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:Urban_Solutions/ui/Process%20Operator/operator_raiseissue.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:developer';
+
+import 'operator_details.dart';
 
 
 class Operator_timer extends StatefulWidget {
@@ -48,21 +51,97 @@ class _Operator_timerState extends State<Operator_timer> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
-              onPressed: () {
-                _boxLogin.clear();
-                _boxLogin.put("loginStatus", false);
-                // Navigator.pushReplacement(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) {
-                //       return const Login();
-                //     },
-                //   ),
-                // );
-              },
-              icon: const Icon(Icons.more_vert),
-            ),
-          )
+          icon: const Icon(Icons.more_vert),
+          onPressed: () {
+            showMenu(
+              context: context,
+              position: RelativeRect.fromLTRB(100, 60, 0, 0), // position where you want to show the menu
+              items: [
+                PopupMenuItem(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(width: 1.0, color: Colors.grey),
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.find_in_page_rounded),
+                      title: Text("Details"),
+                    ),
+                  ),
+                  value: 1,
+                ),
+                PopupMenuItem(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(width: 1.0, color: Colors.grey),
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.stacked_line_chart),
+                      title: Text("Graph"),
+                    ),
+                  ),
+                  value: 2,
+                ),
+                PopupMenuItem(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(width: 1.0, color: Colors.grey),
+                      ),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.description),
+                      title: Text("Description"),
+                    ),
+                  ),
+                  value: 3,
+                ),
+                PopupMenuItem(
+                  child: ListTile(
+                    leading: Icon(Icons.report_problem),
+                    title: Text("Raise issue"),
+                  ),
+                  value: 4,
+                ),
+              ],
+            ).then((value) {
+              if (value != null) {
+                switch (value) {
+                  case 1:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Operator_details()),
+                    );
+                    break;
+                  case 2:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Operator_details()),
+                    );
+                    break;
+                  case 3:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Operator_details()),
+                    );
+                    break;
+                  case 4:
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Operator_raiseissue()),
+                    );
+                    break;
+                }
+              }
+            });
+          },
+        )
+
+         ),
+
         ],
       ),
       body: Column(
