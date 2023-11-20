@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Urban_Solutions/ui/Process%20Operator/operator_description.dart';
 import 'package:Urban_Solutions/ui/Process%20Operator/operator_raiseissue.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -125,7 +126,7 @@ class _Operator_timerState extends State<Operator_timer> {
                   case 3:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Operator_details()),
+                      MaterialPageRoute(builder: (context) => Operator_description()),
                     );
                     break;
                   case 4:

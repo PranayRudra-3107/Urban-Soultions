@@ -11,7 +11,8 @@ dependencies:
     sdk: flutter
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-
+  http: ^0.13.3
+  qr_code_scanner: ^0.5.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

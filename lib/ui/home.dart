@@ -1,13 +1,34 @@
 import 'package:Urban_Solutions/ui/Process%20Operator/operator_card.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
+import 'QRView.dart';
 import 'login.dart';
 import 'model.dart';
-class Home extends StatelessWidget {
-  Home({super.key});
+class Home extends StatefulWidget {
+  Home({Key? key}) : super(key: key);
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+class _HomeState extends State<Home> {
 
   final Box _boxLogin = Hive.box("login");
+  String? dropdownValue;
+  Future<List<String>> fetchData() async {
+    final response = await http.get(Uri.parse('http://13.232.115.150:8000/manufacture/'));
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      List<String> manufactureData = List<String>.from(data['manufacture_data']);
+      return manufactureData;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,159 +85,40 @@ class Home extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Search Work Order No.',
-                      ),
-                      items: <String>['Option 1', 'Option 2', 'Option 3']
-                          .map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (_) {},
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.filter_list),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                              return AlertDialog(
-                                  title: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text('Filters'),
-                                      GestureDetector(
-                                        onTap: () {
-                                          // Add your logic here to clear all the data in the text fields
-                                        },
-                                        child: Text(
-                                          'Remove Filters',
-                                          style: TextStyle(
-                                            color: Colors.blue,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  content: SingleChildScrollView(
-                                    child: ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        maxWidth: 600,  // Set this to your desired width
-                                      ),
-                                      child: ListBody(
-                                        children: <Widget>[
-                                          Text("Start Date"),
-                                          TextFormField(
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              isDense: true,
-                                              suffixIcon: IconButton(
-                                                onPressed: () async {
-                                                  FocusScope.of(context).requestFocus(new FocusNode());
-                                                  final DateTime? picked = await showDatePicker(
-                                                    context: context,
-                                                    initialDate: DateTime.now(),
-                                                    firstDate: DateTime(2000),
-                                                    lastDate: DateTime(2100),
-                                                  );
-                                                  if (picked != null) {
-                                                    // handle the picked date
-                                                  }
-                                                },
-                                                icon: Icon(Icons.calendar_today),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 10), // add some spacing
-                                          Text("Model No."),
-                                          DropdownButtonFormField<String>(
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              isDense: true,
-                                            ),
-                                            items: <String>['Model 1', 'Model 2', 'Model 3'].map((String value) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value),
-                                              );
-                                            }).toList(),
-                                            onChanged: (_) {},
-                                          ),
-                                          SizedBox(height: 10), // add some spacing
-                                          Text("Status"),
-                                          DropdownButtonFormField<String>(
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              isDense: true,
-                                            ),
-                                            items: <String>['Status 1', 'Status 2', 'Status 3'].map((String value) {
-                                              return DropdownMenuItem<String>(
-                                                value: value,
-                                                child: Text(value),
-                                              );
-                                            }).toList(),
-                                            onChanged: (_) {},
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  actions: <Widget>[
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly, // This will evenly space the buttons
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0), // Add some padding around the button
-                                            child: TextButton(
-                                              style: TextButton.styleFrom(
-                                                primary: Colors.green, // This sets the text color
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(20),
-                                                  side: BorderSide(color: Colors.green), // This sets the border color
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Cancel"),
-                                            )
-
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0), // Add some padding around the button
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                minimumSize: const Size.fromHeight(37),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(20),
-                                                ),
-                                                backgroundColor: Colors.green,
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Apply"),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ]
-
+                    child: FutureBuilder<List<String>>(
+                      future: fetchData(),
+                      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                        if (snapshot.hasData) {
+                          return DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            items: snapshot.data?.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              setState(() {
+                                dropdownValue = newValue;
+                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Operator_card(selectedValue: dropdownValue)),
                               );
                             },
-                      );
-                    },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+
+                        // By default, show a loading spinner.
+                        return CircularProgressIndicator();
+                      },
+                    ),
                   ),
+
                 ],
               ),
 
@@ -232,7 +134,10 @@ class Home extends StatelessWidget {
                   backgroundColor: Colors.green,
                 ),
                 onPressed: () {
-
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => QRViewExample()),
+                  );
                 },
                 child: const Text("Scan work order QR code"),
               ),
@@ -250,7 +155,7 @@ class Home extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Operator_card()),
+                            MaterialPageRoute(builder: (context) => Operator_card(selectedValue: dropdownValue)),
                           );
                         },
                         child: Card(
@@ -310,3 +215,142 @@ class Home extends StatelessWidget {
     );
   }
 }
+
+//IconButton(
+//   icon: Icon(Icons.filter_list),
+//   onPressed: () {
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//             return AlertDialog(
+//                 title: Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: <Widget>[
+//                     Text('Filters'),
+//                     GestureDetector(
+//                       onTap: () {
+//                         // Add your logic here to clear all the data in the text fields
+//                       },
+//                       child: Text(
+//                         'Remove Filters',
+//                         style: TextStyle(
+//                           color: Colors.blue,
+//                           fontSize: 12,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 content: SingleChildScrollView(
+//                   child: ConstrainedBox(
+//                     constraints: BoxConstraints(
+//                       maxWidth: 600,  // Set this to your desired width
+//                     ),
+//                     child: ListBody(
+//                       children: <Widget>[
+//                         Text("Start Date"),
+//                         TextFormField(
+//                           decoration: InputDecoration(
+//                             border: OutlineInputBorder(),
+//                             isDense: true,
+//                             suffixIcon: IconButton(
+//                               onPressed: () async {
+//                                 FocusScope.of(context).requestFocus(new FocusNode());
+//                                 final DateTime? picked = await showDatePicker(
+//                                   context: context,
+//                                   initialDate: DateTime.now(),
+//                                   firstDate: DateTime(2000),
+//                                   lastDate: DateTime(2100),
+//                                 );
+//                                 if (picked != null) {
+//                                   // handle the picked date
+//                                 }
+//                               },
+//                               icon: Icon(Icons.calendar_today),
+//                             ),
+//                           ),
+//                         ),
+//                         SizedBox(height: 10), // add some spacing
+//                         Text("Model No."),
+//                         DropdownButtonFormField<String>(
+//                           decoration: InputDecoration(
+//                             border: OutlineInputBorder(),
+//                             isDense: true,
+//                           ),
+//                           items: <String>['Model 1', 'Model 2', 'Model 3'].map((String value) {
+//                             return DropdownMenuItem<String>(
+//                               value: value,
+//                               child: Text(value),
+//                             );
+//                           }).toList(),
+//                           onChanged: (_) {},
+//                         ),
+//                         SizedBox(height: 10), // add some spacing
+//                         Text("Status"),
+//                         DropdownButtonFormField<String>(
+//                           decoration: InputDecoration(
+//                             border: OutlineInputBorder(),
+//                             isDense: true,
+//                           ),
+//                           items: <String>['Status 1', 'Status 2', 'Status 3'].map((String value) {
+//                             return DropdownMenuItem<String>(
+//                               value: value,
+//                               child: Text(value),
+//                             );
+//                           }).toList(),
+//                           onChanged: (_) {},
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//                 actions: <Widget>[
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceEvenly, // This will evenly space the buttons
+//                     children: <Widget>[
+//                       Expanded(
+//                         child: Padding(
+//                           padding: const EdgeInsets.all(8.0), // Add some padding around the button
+//                           child: TextButton(
+//                             style: TextButton.styleFrom(
+//                               primary: Colors.green, // This sets the text color
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(20),
+//                                 side: BorderSide(color: Colors.green), // This sets the border color
+//                               ),
+//                             ),
+//                             onPressed: () {
+//                               Navigator.of(context).pop();
+//                             },
+//                             child: const Text("Cancel"),
+//                           )
+//
+//                         ),
+//                       ),
+//                       Expanded(
+//                         child: Padding(
+//                           padding: const EdgeInsets.all(8.0), // Add some padding around the button
+//                           child: ElevatedButton(
+//                             style: ElevatedButton.styleFrom(
+//                               minimumSize: const Size.fromHeight(37),
+//                               shape: RoundedRectangleBorder(
+//                                 borderRadius: BorderRadius.circular(20),
+//                               ),
+//                               backgroundColor: Colors.green,
+//                             ),
+//                             onPressed: () {
+//                               Navigator.of(context).pop();
+//                             },
+//                             child: const Text("Apply"),
+//                           ),
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ]
+//
+//             );
+//           },
+//     );
+//   },
+// )
