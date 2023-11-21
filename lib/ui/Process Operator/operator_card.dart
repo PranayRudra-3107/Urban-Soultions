@@ -30,7 +30,7 @@ class Operator_card extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Model:S -10"),
+        title: Text('Model: $selectedValue'),
         elevation: 0,
         backgroundColor: Colors.green,
         centerTitle: true,
@@ -78,7 +78,7 @@ class Operator_card extends StatelessWidget {
                               );
                             },
                             child: Container(
-                              height: 165,
+                              height: process['start_date'] != null ? 165 : 125,
                               child: Card(
                                 elevation: 9,
                                 child: Row(
@@ -94,11 +94,15 @@ class Operator_card extends StatelessWidget {
                                               children: <Widget>[
                                                 Row(
                                                   children: <Widget>[
-                                                    Icon(Icons.circle_rounded, color: Colors.grey, size: 20.0),
-
+                                                    Icon(
+                                                      process['process_status'] == 'Completed' ? Icons.check : Icons.circle,
+                                                      color: process['process_status'] == 'Not Started' ? Colors.grey : Colors.green,
+                                                      size: 20.0,
+                                                    ),
                                                     Text(process['process_status'] ?? 'null'),
                                                   ],
                                                 ),
+
                                                 Icon(Icons.chevron_right),
                                               ],
                                             ),
@@ -110,16 +114,30 @@ class Operator_card extends StatelessWidget {
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            const SizedBox(height: 10),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: <Widget>[
-                                                Text("Start Date: ${process['start_date'] ?? 'null'}"),
-                                                Text("Time: ${process['time'] ?? 'null'}")
-                                              ],
+                                            Visibility(
+                                              visible: process['start_date'] != null,
+                                              child: Column(
+                                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: <Widget>[
+                                                      Text("Start Date: ${process['start_date'] ?? 'null'}"),
+                                                      Text("Time: ${process['time'] ?? 'null'}")
+                                                    ],
+                                                  ),
+                                                  Visibility(
+                                                      visible: process['completed_date'] != null && process['completed_date'] != '1111-11-11',
+                                                      child: Column(
+                                                        children: [
+                                                          const SizedBox(height: 10),
+                                                          Text("Complete Date: ${process['completed_date'] ?? 'null'}"),
+                                                        ],
+                                                      ))
+                                                ],
+                                              ),
                                             ),
-                                            const SizedBox(height: 10),
-                                            Text("Complete Date: ${process['completed_date'] ?? 'null'}"),
                                           ],
                                         ),
                                       ),
@@ -128,6 +146,7 @@ class Operator_card extends StatelessWidget {
                                 ),
                               ),
                             )
+
                           );
 
                         }).toList(),

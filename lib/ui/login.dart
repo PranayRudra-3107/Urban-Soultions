@@ -31,7 +31,6 @@ class _LoginState extends State<Login> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

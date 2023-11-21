@@ -236,10 +236,10 @@ packages:
     dependency: "direct main"
     description:
       name: qr_code_scanner
-      sha256: "5867784caf161bc5d262d35a0bb88864b50d60abdef739d3b46156f54fe7867a"
+      sha256: f23b68d893505a424f0bd2e324ebea71ed88465d572d26bb8d2e78a4749591fd
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.2"
+    version: "1.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
