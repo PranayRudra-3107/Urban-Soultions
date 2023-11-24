@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Operator_raiseissue extends StatelessWidget {
-  Operator_raiseissue({super.key});
+  Operator_raiseissue(int? mId, int? pId, {super.key});
 
   final List<String> _options = ['Option 1', 'Option 2', 'Option 3'];
 
@@ -40,7 +40,7 @@ class Operator_raiseissue extends StatelessWidget {
                     style: TextStyle(color: Colors.grey),
                   ),
                   Text(
-                    'Work Order Generation',
+                    'Work     b bnmmhvbn                                                                                       nmnmnnmOrder Generation',
                     style: TextStyle(
                       fontSize: 17,
                         fontWeight: FontWeight.bold

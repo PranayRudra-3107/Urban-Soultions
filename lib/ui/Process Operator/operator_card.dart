@@ -74,7 +74,7 @@ class Operator_card extends StatelessWidget {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => Operator_timer()),
+                                MaterialPageRoute(builder: (context) => Operator_timer(processName:process['process_name'], pId: process['p_id'], mId: process['m_id'])),
                               );
                             },
                             child: Container(

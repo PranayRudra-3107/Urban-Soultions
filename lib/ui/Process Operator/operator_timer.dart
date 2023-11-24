@@ -1,29 +1,73 @@
 import 'dart:async';
-
+import 'dart:convert';
+import 'package:Urban_Solutions/ui/Process%20Operator/operator_graphs.dart';
+import 'package:http/http.dart' as http;
 import 'package:Urban_Solutions/ui/Process%20Operator/operator_description.dart';
 import 'package:Urban_Solutions/ui/Process%20Operator/operator_raiseissue.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:developer';
+import 'package:intl/intl.dart';
+
 
 import 'operator_details.dart';
 
 
 class Operator_timer extends StatefulWidget {
-  Operator_timer({Key? key}) : super(key: key);
+  final String? processName;
+  final int? pId;
+  final int? mId;
+  Operator_timer({this.processName,this.pId, this.mId}) ;
 
   @override
   _Operator_timerState createState() => _Operator_timerState();
 }
 
 class _Operator_timerState extends State<Operator_timer> {
+  String? processName;
+  int? pId;
+  int? mId;
+
   final Box _boxLogin = Hive.box("login");
+  String _status = 'On Going';
+  Future<void> updateProcess() async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    String formattedTime = DateFormat('HH:mm:ss').format(now);
+
+    final response = await http.put(
+      Uri.parse('http://13.232.115.150:8000/start_stop_process/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'm_id': '${widget.mId}',
+        'p_id' : '${widget.pId}',
+        'start_date': formattedDate,
+        'end_date': '1111-11-11',
+        'time': formattedTime,
+        'issues': 'issue raised',
+        'status': _status,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, then parse the JSON.
+      print('Process updated successfully, $mId $pId' );
+
+    } else {
+      // If the server returns an unsuccessful response code, then throw an exception.
+      throw Exception('Failed to update process.');
+    }
+  }
+
   bool _isRunning = false;
   Stopwatch _stopwatch = Stopwatch();
 
   void _toggleTimer() {
     setState(() {
       _isRunning = !_isRunning;
+      _status = _isRunning ? 'On Going' : 'Completed';
       if (_isRunning) {
         _stopwatch.start();
         Timer.periodic(Duration(seconds: 1), (Timer t) {
@@ -44,7 +88,7 @@ class _Operator_timerState extends State<Operator_timer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Work Order Generation"),
+        title: Text('${widget.processName}'),
         elevation: 0,
         backgroundColor: Colors.green,
         centerTitle: true,
@@ -81,7 +125,7 @@ class _Operator_timerState extends State<Operator_timer> {
                     ),
                     child: ListTile(
                       leading: Icon(Icons.stacked_line_chart),
-                      title: Text("Graph"),
+                      title: Text("Graphs"),
                     ),
                   ),
                   value: 2,
@@ -114,25 +158,25 @@ class _Operator_timerState extends State<Operator_timer> {
                   case 1:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Operator_details()),
+                      MaterialPageRoute(builder: (context) => Operator_details(mId: widget.mId, pId: widget.pId)),
                     );
                     break;
                   case 2:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Operator_details()),
+                      MaterialPageRoute(builder: (context) => Operator_graphs(mId:widget.mId,pId:widget.pId)),
                     );
                     break;
                   case 3:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Operator_description()),
+                      MaterialPageRoute(builder: (context) => Operator_description(mId: widget.mId, pId: widget.pId)),
                     );
                     break;
                   case 4:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Operator_raiseissue()),
+                      MaterialPageRoute(builder: (context) => Operator_raiseissue(widget.mId,widget.pId)),
                     );
                     break;
                 }
@@ -169,9 +213,10 @@ class _Operator_timerState extends State<Operator_timer> {
                           style: TextStyle(fontSize: 19,color: Colors.grey),
                         ),
                         Text(
-                          '${_stopwatch.elapsed.inHours.remainder(60).toString().padLeft(2, '0')}hr : ${_stopwatch.elapsed.inMinutes.remainder(60).toString().padLeft(2, '0')}min',
+                          '${_stopwatch.elapsed.inHours.remainder(60).toString().padLeft(2, '0')} : ${_stopwatch.elapsed.inMinutes.remainder(60).toString().padLeft(2, '0')} : ${_stopwatch.elapsed.inSeconds.remainder(60).toString().padLeft(2, '0')}',
                           style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-                        ),
+                        )
+
                       ],
                     ),
                     ElevatedButton(
@@ -182,7 +227,10 @@ class _Operator_timerState extends State<Operator_timer> {
                         ),
                         backgroundColor: Colors.green,
                       ),
-                      onPressed: _toggleTimer,
+                      onPressed: () {
+                        _toggleTimer();
+                        updateProcess();
+                      },
                       child: Text(_isRunning ? 'Stop' : 'Start'),
                     ),
                   ],
