@@ -1,9 +1,8 @@
-import 'package:Urban_Solutions/ui/Process%20Operator/operator_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'dart:developer';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:Urban_Solutions/ui/Process%20Operator/operator_timer.dart';
 
 class Operator_card extends StatefulWidget {
   final String? selectedValue;
@@ -41,6 +40,13 @@ class _OperatorCardState extends State<Operator_card> {
     }
   }
 
+  Future<void> _handleRefresh() async {
+    await _refreshData();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Data refreshed'),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,11 +64,8 @@ class _OperatorCardState extends State<Operator_card> {
                 border: Border.all(color: Colors.white),
               ),
               child: IconButton(
-                onPressed: () {
-                  _boxLogin.clear();
-                  _boxLogin.put("loginStatus", false);
-                },
-                icon: const Icon(Icons.notifications),
+                onPressed: _handleRefresh,
+                icon: const Icon(Icons.refresh),
               ),
             ),
           )
@@ -77,7 +80,6 @@ class _OperatorCardState extends State<Operator_card> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-
                 const SizedBox(height: 10),
                 RefreshIndicator(
                   onRefresh: _refreshData,

@@ -8,30 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:developer';
 import 'package:intl/intl.dart';
-
-
 import 'operator_details.dart';
 
 class StopWatch extends Stopwatch{
   int _starterMilliseconds = 0;
-
   StopWatch();
-
   get elapsedDuration{
     return Duration(
         microseconds:
         this.elapsedMicroseconds + (this._starterMilliseconds * 1000)
     );
   }
-
   get elapsedMillis{
     return this.elapsedMilliseconds + this._starterMilliseconds;
   }
-
   set milliseconds(int timeInMilliseconds){
     this._starterMilliseconds = timeInMilliseconds;
   }
-
 }
 
 class Operator_timer extends StatefulWidget {
@@ -48,21 +41,24 @@ class _Operator_timerState extends State<Operator_timer> {
   String? processName;
   int? pId;
   int? mId;
-
+  bool _isRunning = false;
   final Box _boxLogin = Hive.box("login");
-  String _status = 'On Going';
+  String _status = "On Going";
   Future<void> updateProcess() async {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    String formattedTime = DateFormat('HH:mm:ss').format(now);
 
     print('Updating process with the following data:');
-    print('m_id: ${widget.mId}');
-    print('p_id: ${widget.pId}');
+    print('m_id: ${int.parse('${widget.mId}')}');
+    print('p_id: ${int.parse('${widget.pId}')}');
     print('start_date: $formattedDate');
     print('end_date: ${_isRunning ? '1111-11-11' : formattedDate}');
-    print('time: ${_isRunning ? '00:00:00' : _stopwatch.elapsedDuration.inHours.remainder(60).toString().padLeft(2, '0')} : ${_stopwatch.elapsedDuration.inMinutes.remainder(60).toString().padLeft(2, '0')} : ${_stopwatch.elapsedDuration.inSeconds.remainder(60).toString().padLeft(2, '0')}');
+    print('timer: ${_isRunning ? '00:00:00' : '${_stopwatch.elapsed.inHours.toString().padLeft(2, '0')}:${_stopwatch.elapsed.inMinutes.remainder(60).toString().padLeft(2, '0')}:${_stopwatch.elapsed.inSeconds.remainder(60).toString().padLeft(2, '0')}'}');
+    print('start_time: ${formattedTime}');
     print('issues: issue raised');
     print('status: $_status');
+
 
     final response = await http.put(
       Uri.parse('http://13.232.115.150:8000/start_stop_process/'),
@@ -70,20 +66,21 @@ class _Operator_timerState extends State<Operator_timer> {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
-        'm_id': '${widget.mId}',
-        'p_id': '${widget.pId}',
+        'm_id':int.parse('${widget.mId}'),
+        'p_id': int.parse('${widget.pId}'),
         'start_date': formattedDate,
         'end_date': _isRunning ? '1111-11-11' : formattedDate,
-        'time': _isRunning
+        'timer': _isRunning
             ? '00:00:00'
-            : '${_stopwatch.elapsedDuration.inHours.remainder(60).toString().padLeft(2, '0')} : ${_stopwatch.elapsedDuration.inMinutes.remainder(60).toString().padLeft(2, '0')} : ${_stopwatch.elapsedDuration.inSeconds.remainder(60).toString().padLeft(2, '0')}',
+            : '${_stopwatch.elapsedDuration.inHours.remainder(60)} : ${_stopwatch.elapsedDuration.inMinutes.remainder(60)} : ${_stopwatch.elapsedDuration.inSeconds.remainder(60)}',
+        'start_time': formattedTime,
         'issues': 'issue raised',
         'status': _status,
       }),
     );
 
     if (response.statusCode == 200) {
-      print('Process updated successfully, mId: ${widget.mId}, pId: ${widget.pId}');
+      print('Process updated successfully, mId: ${widget.mId}, pId: ${widget.pId}   ${response.body}');
     } else {
       print('Failed to update process. Status code: ${response.statusCode}');
       print('Response body: ${response.body}');
@@ -91,9 +88,6 @@ class _Operator_timerState extends State<Operator_timer> {
     }
   }
 
-
-
-  bool _isRunning = false;
 
   var _stopwatch = new StopWatch();
   void _toggleTimer() {
@@ -109,7 +103,6 @@ class _Operator_timerState extends State<Operator_timer> {
             setState(() {});
           } else {
             t.cancel();
-            updateProcess();
           }
         });
       } else {
