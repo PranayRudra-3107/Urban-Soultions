@@ -44,60 +44,108 @@ class _Operator_timerState extends State<Operator_timer> {
   bool _isRunning = false;
   final Box _boxLogin = Hive.box("login");
   String _status = "On Going";
-  Future<void> updateProcess() async {
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-    String formattedTime = DateFormat('HH:mm:ss').format(now);
-
-    print('Updating process with the following data:');
-    print('m_id: ${int.parse('${widget.mId}')}');
-    print('p_id: ${int.parse('${widget.pId}')}');
-    print('start_date: $formattedDate');
-    print('end_date: ${_isRunning ? '1111-11-11' : formattedDate}');
-    print('timer: ${_isRunning ? '00:00:00' : '${_stopwatch.elapsed.inHours.toString().padLeft(2, '0')}:${_stopwatch.elapsed.inMinutes.remainder(60).toString().padLeft(2, '0')}:${_stopwatch.elapsed.inSeconds.remainder(60).toString().padLeft(2, '0')}'}');
-    print('start_time: ${formattedTime}');
-    print('issues: issue raised');
-    print('status: $_status');
+  String _updateProcess = "null";
+  bool startstop = true;
+  DateTime now = DateTime.now();
 
 
-    final response = await http.put(
-      Uri.parse('http://13.232.115.150:8000/start_stop_process/'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'm_id':int.parse('${widget.mId}'),
-        'p_id': int.parse('${widget.pId}'),
-        'start_date': formattedDate,
-        'end_date': _isRunning ? '1111-11-11' : formattedDate,
-        'timer': _isRunning
-            ? '00:00:00'
-            : '${_stopwatch.elapsedDuration.inHours.remainder(60)} : ${_stopwatch.elapsedDuration.inMinutes.remainder(60)} : ${_stopwatch.elapsedDuration.inSeconds.remainder(60)}',
-        'start_time': formattedTime,
-        'issues': 'issue raised',
-        'status': _status,
-      }),
+  Future<Map<String, dynamic>> fetchData() async {
+    final response = await http.get(
+      Uri.parse(
+          'http://13.232.115.150:8000/about_process/?p_id=${widget.pId}&m_id=${widget.mId}&module=Live'),
     );
 
     if (response.statusCode == 200) {
-      print('Process updated successfully, mId: ${widget.mId}, pId: ${widget.pId}   ${response.body}');
+      return jsonDecode(response.body);
     } else {
-      print('Failed to update process. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-      throw Exception('Failed to update process.');
+      throw Exception('Failed to fetch data from the API');
+    }
+  }
+
+  var _stopwatch = new StopWatch();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData().then((data) {
+      if (data['p_status'] == 'On Going') {
+        DateTime startTime = DateTime.parse('${data['start_date']} ${data['start_time']}');
+        int differenceMilliseconds = now.difference(startTime).inMilliseconds;
+        setState(() {
+          _stopwatch.milliseconds = differenceMilliseconds ;
+          _toggleTimer();
+        });
+      } else if(data['p_status'] == 'Completed'){
+
+        setState(() {
+         // _stopwatch.milliseconds =
+        });
+        startstop = false;
+      }
+      else{
+        setState(() {
+          _stopwatch.milliseconds = 0;
+        });
+      }
+    });
+  }
+
+  Future<void> updateProcess() async {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    String formattedTime = DateFormat('HH:mm:ss').format(now);
+    String formattedElapsedTime =
+    '${_stopwatch.elapsedDuration.inHours.remainder(60).toString().padLeft(2, '0')}:${_stopwatch.elapsedDuration.inMinutes.remainder(60).toString().padLeft(2, '0')}:${_stopwatch.elapsedDuration.inSeconds.remainder(60).toString().padLeft(2, '0')}';
+    if(_updateProcess == "start"){
+      print('Updating process with the following data:');
+      print('m_id: ${int.parse('${widget.mId}')}');
+      print('p_id: ${int.parse('${widget.pId}')}');
+      print('start_date: $formattedDate');
+      print('end_date: ${_isRunning ? '1111-11-11' : formattedDate}');
+      print('timer: ${_isRunning ? '00:00:00' : formattedElapsedTime}');
+      print('start_time: ${formattedTime}');
+      print('issues: issue raised');
+      print('status: $_status');
+      print('updateprocess: $_updateProcess');
+      if(_isRunning == false){
+        startstop = false;
+      }
+      final response = await http.put(
+        Uri.parse('http://13.232.115.150:8000/start_stop_process/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'm_id':int.parse('${widget.mId}'),
+          'p_id': int.parse('${widget.pId}'),
+          'start_date': formattedDate,
+          'end_date': _isRunning ? '1111-11-11' : formattedDate,
+          'timer': _isRunning
+              ? '00:00:00'
+              : formattedElapsedTime,
+          'start_time': formattedTime,
+          'issues': 'issue raised',
+          'status': _status,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        _updateProcess = "null";
+        print('Process updated successfully, mId: ${widget.mId}, pId: ${widget.pId}   ${response.body} , ${ _updateProcess}');
+      } else {
+        print('Failed to update process. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        throw Exception('Failed to update process.');
+      }
     }
   }
 
 
-  var _stopwatch = new StopWatch();
   void _toggleTimer() {
     setState(() {
       _isRunning = !_isRunning;
       _status = _isRunning ? 'On Going' : 'Completed';
       if (_isRunning) {
         _stopwatch.start();
-        _stopwatch.milliseconds = 10000;
-
         Timer.periodic(Duration(seconds: 1), (Timer t) {
           if (_isRunning) {
             setState(() {});
@@ -256,8 +304,11 @@ class _Operator_timerState extends State<Operator_timer> {
                         backgroundColor: Colors.green,
                       ),
                       onPressed: () {
-                        _toggleTimer();
-                        updateProcess();
+                        if(startstop){
+                          _toggleTimer();
+                          _updateProcess = "start";
+                          updateProcess();
+                        }
                       },
                       child: Text(_isRunning ? 'Stop' : 'Start'),
                     ),

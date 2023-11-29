@@ -148,7 +148,7 @@ class _OperatorCardState extends State<Operator_card> {
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: <Widget>[
                                                         Text("Start Date: ${process['start_date'] ?? 'null'}"),
-                                                        Text("Time: ${process['time'] ?? 'null'}"),
+                                                        Text("Time: ${process['timer'] ?? 'null'}"),
                                                       ],
                                                     ),
                                                     Visibility(

@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import 'Process Operator/operator_card.dart';
+
 
 class QRViewExample extends StatefulWidget {
   @override
@@ -47,6 +49,12 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Operator_card(selectedValue: result?.code),
+          ),
+        );
       });
     });
   }

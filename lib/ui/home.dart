@@ -68,9 +68,10 @@ class _HomeState extends State<Home> {
       //backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Padding(
+
           padding: EdgeInsets.all(20.0),
           child :Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 10),
@@ -143,71 +144,7 @@ class _HomeState extends State<Home> {
               ),
 
               const SizedBox(height: 10),
-              // Text("Recent Work Orders"),
-              // Container(
-              //   height: 300,
-              //   child: ListView.builder(
-              //     itemCount: 5,
-              //     itemBuilder: (BuildContext context, int index){
-              //       return Container(
-              //         height: 150,
-              //         child: GestureDetector(
-              //           onTap: () {
-              //             Navigator.push(
-              //               context,
-              //               MaterialPageRoute(builder: (context) => Operator_card(selectedValue: dropdownValue)),
-              //             );
-              //           },
-              //           child: Card(
-              //             elevation: 9,
-              //             child: Row(
-              //               children: <Widget>[
-              //                 Image.asset(
-              //                   'lib/assets/model.png',
-              //                   width: 150,
-              //                   height: 150,
-              //                 ),
-              //                 Expanded(
-              //                   child: Padding(
-              //                     padding: EdgeInsets.only(top: 30.0, left: 10.0, right: 10.0, bottom: 10.0),
-              //                     child: Column(
-              //                       crossAxisAlignment: CrossAxisAlignment.start,
-              //                       children: <Widget>[
-              //                         Text(
-              //                           'Model: S-10',
-              //                           style: TextStyle(
-              //                             fontSize: 19,
-              //                             fontWeight: FontWeight.bold,
-              //                           ),
-              //                         ),
-              //                         Text( 'Processing capacity 10kg of wet waste',
-              //                           style: TextStyle(
-              //                             fontSize: 15,
-              //                           ),
-              //                           softWrap: true,
-              //                         ),
-              //                       ],
-              //                     ),
-              //                   ),
-              //                 ),
-              //               ],
-              //             ),
-              //           ),
-              //         ),
-              //       );
-              //
-              //     }
-              //   ),
-              // ),
-              // Text(
-              //   "Welcome 🎉",
-              //   style: Theme.of(context).textTheme.bodyLarge,
-              // ),
-              // const SizedBox(height: 10),
-              // Text(
-              //   _boxLogin.get("userName"),
-              //   style: Theme.of(context).textTheme.headlineLarge,
-              // ),
+
             ],
           ),
         ),
@@ -216,6 +153,71 @@ class _HomeState extends State<Home> {
   }
 }
 
+// Text("Recent Work Orders"),
+// Container(
+//   height: 300,
+//   child: ListView.builder(
+//     itemCount: 5,
+//     itemBuilder: (BuildContext context, int index){
+//       return Container(
+//         height: 150,
+//         child: GestureDetector(
+//           onTap: () {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(builder: (context) => Operator_card(selectedValue: dropdownValue)),
+//             );
+//           },
+//           child: Card(
+//             elevation: 9,
+//             child: Row(
+//               children: <Widget>[
+//                 Image.asset(
+//                   'lib/assets/model.png',
+//                   width: 150,
+//                   height: 150,
+//                 ),
+//                 Expanded(
+//                   child: Padding(
+//                     padding: EdgeInsets.only(top: 30.0, left: 10.0, right: 10.0, bottom: 10.0),
+//                     child: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: <Widget>[
+//                         Text(
+//                           'Model: S-10',
+//                           style: TextStyle(
+//                             fontSize: 19,
+//                             fontWeight: FontWeight.bold,
+//                           ),
+//                         ),
+//                         Text( 'Processing capacity 10kg of wet waste',
+//                           style: TextStyle(
+//                             fontSize: 15,
+//                           ),
+//                           softWrap: true,
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       );
+//
+//     }
+//   ),
+// ),
+// Text(
+//   "Welcome 🎉",
+//   style: Theme.of(context).textTheme.bodyLarge,
+// ),
+// const SizedBox(height: 10),
+// Text(
+//   _boxLogin.get("userName"),
+//   style: Theme.of(context).textTheme.headlineLarge,
+// ),
 //IconButton(
 //   icon: Icon(Icons.filter_list),
 //   onPressed: () {
